@@ -17,7 +17,8 @@ typedef enum {
   PREPARE_SUCESS,
   PREPARE_UNRECONIZED_COMMAND,
   PREPARE_SYNTAX_ERROR,
-  PREPARE_STRING_TOO_LONG
+  PREPARE_STRING_TOO_LONG,
+  PREPARE_NEGATIVE_ID
 } PrepareResult;
 
 typedef enum {
@@ -137,6 +138,9 @@ PrepareResult prepare_insert(InputBuffer *input_buffer, Statement *statemet) {
     return PREPARE_SYNTAX_ERROR;
 
   int id = atoi(id_string);
+
+  if (id < 0) return PREPARE_NEGATIVE_ID;
+
   if (strlen(username) > COLUMN_USERNAME_SIZE)
     return PREPARE_STRING_TOO_LONG;
   
@@ -252,6 +256,9 @@ int main (int argc, char *argv[]) {
         continue;
       case (PREPARE_STRING_TOO_LONG):
         printf("String is too long\n");
+        continue;
+      case (PREPARE_NEGATIVE_ID):
+        printf("ID must be postive\n");
         continue;
       case (PREPARE_UNRECONIZED_COMMAND):
         printf("Unrecognized keyword of '%s' \n", input_buffer -> buffer);
